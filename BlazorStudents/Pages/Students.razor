@@ -11,7 +11,16 @@
 }
 else
 {
-    <table class="table">
+    <QuickGrid Items="@students" Pagination="@pagination">
+        <PropertyColumn Property="@(_=> _.Id)" Sortable="true" />
+        <TemplateColumn Title="Name" SortBy="@sortByName">
+            <div class="flex items-center">
+                @context.FirstName @context.LastName
+            </div>
+        </TemplateColumn>
+        <PropertyColumn Property="@(_=> _.School)" Sortable="true" />
+    </QuickGrid>
+    @* <table class="table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -38,11 +47,16 @@ else
                 </tr>
             }
         </tbody>
-    </table>
+    </table> *@
 }
 
 @code {
     private Student[]? students;
+    private PaginationState pagination = new PaginationState{ ItemsPerPage = 10};
+    IQueryable<Student> students = Student.GetStudents();
+
+    GridSort<Student> sortByName = GridSort<Student>.ByAscending(_ => _.FirstName)
+                                                 .ThenAscending(_ => _.LastName);
 
     protected override async Task OnInitializedAsync()
     {
